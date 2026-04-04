@@ -2,7 +2,7 @@ const { pool } = require('../config/db');
 
 async function findById(id) {
   const [rows] = await pool.query(
-    `SELECT id, username, email, weight, goal, diet_type,
+    `SELECT id, username, email, role, weight, goal, diet_type,
             calorie_target, notification_preferences, created_at
      FROM users WHERE id = ?`,
     [id]

@@ -1,23 +1,31 @@
-// const { pool } = require('../config/db');
+const ArticleModel = require('../models/article.model');
 
 async function getAll() {
-  // TODO: query all articles
+  return ArticleModel.findAll();
 }
 
 async function getById(id) {
-  // TODO: fetch article + comments by id
+  const article = await ArticleModel.findById(id);
+  if (!article) throw { status: 404, message: 'Article not found.' };
+  return article;
 }
 
 async function create(userId, data) {
-  // TODO: insert article
+  if (!data.title)   throw { status: 400, message: 'title is required.' };
+  if (!data.content) throw { status: 400, message: 'content is required.' };
+  return ArticleModel.create({ userId, ...data });
 }
 
 async function update(id, data) {
-  // TODO: update article
+  const article = await ArticleModel.findById(id);
+  if (!article) throw { status: 404, message: 'Article not found.' };
+  return ArticleModel.updateById(id, data);
 }
 
 async function remove(id) {
-  // TODO: delete article
+  const article = await ArticleModel.findById(id);
+  if (!article) throw { status: 404, message: 'Article not found.' };
+  await ArticleModel.removeById(id);
 }
 
 module.exports = { getAll, getById, create, update, remove };

@@ -1,9 +1,49 @@
 const { pool } = require('../config/db');
 
-// TODO: findAll()
-// TODO: findById(id)
-// TODO: create(data)
-// TODO: update(id, data)
-// TODO: remove(id)
+const SELECT_COLS = `
+  id, user_id, title, summary, category, content, created_at, updated_at
+`;
 
-module.exports = {};
+async function findAll() {
+  const [rows] = await pool.query(
+    `SELECT ${SELECT_COLS} FROM articles ORDER BY created_at DESC`
+  );
+  return rows;
+}
+
+async function findById(id) {
+  const [rows] = await pool.query(
+    `SELECT ${SELECT_COLS} FROM articles WHERE id = ?`,
+    [id]
+  );
+  return rows[0] || null;
+}
+
+async function create({ userId, title, summary, category, content }) {
+  const [result] = await pool.query(
+    `INSERT INTO articles (user_id, title, summary, category, content)
+     VALUES (?, ?, ?, ?, ?)`,
+    [userId, title, summary ?? null, category ?? null, content]
+  );
+  return findById(result.insertId);
+}
+
+const UPDATABLE_FIELDS = ['title', 'summary', 'category', 'content'];
+
+async function updateById(id, data) {
+  const fields = Object.keys(data).filter((k) => UPDATABLE_FIELDS.includes(k));
+  if (fields.length === 0) return findById(id);
+
+  const setClause = fields.map((k) => `${k} = ?`).join(', ');
+  await pool.query(
+    `UPDATE articles SET ${setClause} WHERE id = ?`,
+    [...fields.map((k) => data[k]), id]
+  );
+  return findById(id);
+}
+
+async function removeById(id) {
+  await pool.query('DELETE FROM articles WHERE id = ?', [id]);
+}
+
+module.exports = { findAll, findById, create, updateById, removeById };

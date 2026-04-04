@@ -10,7 +10,11 @@ import ProfilePage      from './pages/ProfilePage';
 import RecipesPage      from './pages/RecipesPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
 import AddRecipePage    from './pages/AddRecipePage';
-import ArticlesPage     from './pages/ArticlesPage';
+import EditRecipePage   from './pages/EditRecipePage';
+import ArticlesPage       from './pages/ArticlesPage';
+import ArticleDetailPage  from './pages/ArticleDetailPage';
+import AddArticlePage     from './pages/AddArticlePage';
+import EditArticlePage    from './pages/EditArticlePage';
 import DietPlannerPage  from './pages/DietPlannerPage';
 import MealLogPage      from './pages/MealLogPage';
 import ShoppingListPage from './pages/ShoppingListPage';
@@ -29,12 +33,18 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/recipes"  element={<RecipesPage />} />
           <Route path="/recipes/:id" element={<RecipeDetailPage />} />
-          <Route path="/articles" element={<ArticlesPage />} />
+          <Route path="/articles"          element={<ArticlesPage />} />
+          <Route path="/articles/:id"      element={<ArticleDetailPage />} />
+
+          {/* Admin-only article management (still behind auth) */}
+          <Route path="/articles/add"      element={<ProtectedRoute><AddArticlePage /></ProtectedRoute>} />
+          <Route path="/articles/:id/edit" element={<ProtectedRoute><EditArticlePage /></ProtectedRoute>} />
 
           {/* Private */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/profile"   element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-          <Route path="/recipes/add" element={<ProtectedRoute><AddRecipePage /></ProtectedRoute>} />
+          <Route path="/recipes/add"     element={<ProtectedRoute><AddRecipePage /></ProtectedRoute>} />
+          <Route path="/recipes/:id/edit" element={<ProtectedRoute><EditRecipePage /></ProtectedRoute>} />
           <Route path="/planner"   element={<ProtectedRoute><DietPlannerPage /></ProtectedRoute>} />
           <Route path="/meals"     element={<ProtectedRoute><MealLogPage /></ProtectedRoute>} />
           <Route path="/shopping"  element={<ProtectedRoute><ShoppingListPage /></ProtectedRoute>} />

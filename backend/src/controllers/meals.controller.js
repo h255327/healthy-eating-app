@@ -1,28 +1,62 @@
 const mealsService = require('../services/meals.service');
 
-async function getAll(req, res) {
-  // TODO: return all meal logs for authenticated user
-  res.json({ message: 'getAll meals – not implemented' });
-}
-
 async function getByDate(req, res) {
-  // TODO: return meals for a specific date
-  res.json({ message: 'getByDate meals – not implemented' });
+  try {
+    const result = await mealsService.getByDate(req.user.id, req.query.date);
+    return res.json(result);
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to fetch meals.' });
+  }
 }
 
-async function create(req, res) {
-  // TODO: log a new meal
-  res.json({ message: 'create meal – not implemented' });
+async function createMeal(req, res) {
+  try {
+    const meal = await mealsService.createMeal(req.user.id, req.body);
+    return res.status(201).json({ message: 'Meal created.', meal });
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to create meal.' });
+  }
 }
 
-async function update(req, res) {
-  // TODO: update a meal log entry
-  res.json({ message: 'update meal – not implemented' });
+async function addItem(req, res) {
+  try {
+    const item = await mealsService.addItem(Number(req.params.mealId), req.user.id, req.body);
+    return res.status(201).json({ message: 'Item added.', item });
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to add item.' });
+  }
 }
 
-async function remove(req, res) {
-  // TODO: delete a meal log entry
-  res.json({ message: 'remove meal – not implemented' });
+async function updateItem(req, res) {
+  try {
+    const item = await mealsService.updateItem(
+      Number(req.params.mealId),
+      Number(req.params.itemId),
+      req.user.id,
+      req.body
+    );
+    return res.json({ message: 'Item updated.', item });
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to update item.' });
+  }
 }
 
-module.exports = { getAll, getByDate, create, update, remove };
+async function deleteItem(req, res) {
+  try {
+    await mealsService.deleteItem(
+      Number(req.params.mealId),
+      Number(req.params.itemId),
+      req.user.id
+    );
+    return res.json({ message: 'Item deleted.' });
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to delete item.' });
+  }
+}
+
+module.exports = { getByDate, createMeal, addItem, updateItem, deleteItem };

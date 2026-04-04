@@ -1,20 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const mealsController = require('../controllers/meals.controller');
+const { authenticate } = require('../middleware/auth.middleware');
 
-// GET    /api/meals
-router.get('/',       mealsController.getAll);
+// All meal routes require authentication
+router.use(authenticate);
 
-// GET    /api/meals/date/:date
-router.get('/date/:date', mealsController.getByDate);
+// GET  /api/meals?date=YYYY-MM-DD
+router.get('/',                                        mealsController.getByDate);
 
-// POST   /api/meals
-router.post('/',      mealsController.create);
+// POST /api/meals
+router.post('/',                                       mealsController.createMeal);
 
-// PUT    /api/meals/:id
-router.put('/:id',    mealsController.update);
+// POST /api/meals/:mealId/items
+router.post('/:mealId/items',                          mealsController.addItem);
 
-// DELETE /api/meals/:id
-router.delete('/:id', mealsController.remove);
+// PUT  /api/meals/:mealId/items/:itemId
+router.put('/:mealId/items/:itemId',                   mealsController.updateItem);
+
+// DELETE /api/meals/:mealId/items/:itemId
+router.delete('/:mealId/items/:itemId',                mealsController.deleteItem);
 
 module.exports = router;

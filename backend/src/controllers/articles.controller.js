@@ -1,28 +1,52 @@
 const articlesService = require('../services/articles.service');
 
-async function getAll(req, res) {
-  // TODO: return list of articles
-  res.json({ message: 'getAll articles – not implemented' });
+async function getAll(_req, res) {
+  try {
+    const articles = await articlesService.getAll();
+    return res.json({ articles });
+  } catch (err) {
+    return res.status(500).json({ error: 'Failed to fetch articles.' });
+  }
 }
 
 async function getById(req, res) {
-  // TODO: return single article by id
-  res.json({ message: 'getById article – not implemented' });
+  try {
+    const article = await articlesService.getById(Number(req.params.id));
+    return res.json({ article });
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to fetch article.' });
+  }
 }
 
 async function create(req, res) {
-  // TODO: create new article
-  res.json({ message: 'create article – not implemented' });
+  try {
+    const article = await articlesService.create(req.user.id, req.body);
+    return res.status(201).json({ message: 'Article created.', article });
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to create article.' });
+  }
 }
 
 async function update(req, res) {
-  // TODO: update article by id
-  res.json({ message: 'update article – not implemented' });
+  try {
+    const article = await articlesService.update(Number(req.params.id), req.body);
+    return res.json({ message: 'Article updated.', article });
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to update article.' });
+  }
 }
 
 async function remove(req, res) {
-  // TODO: delete article by id
-  res.json({ message: 'remove article – not implemented' });
+  try {
+    await articlesService.remove(Number(req.params.id));
+    return res.json({ message: 'Article deleted.' });
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to delete article.' });
+  }
 }
 
 module.exports = { getAll, getById, create, update, remove };
