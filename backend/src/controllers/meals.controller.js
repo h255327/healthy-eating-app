@@ -69,4 +69,34 @@ async function addItemFromFood(req, res) {
   }
 }
 
-module.exports = { getByDate, createMeal, addItem, addItemFromFood, updateItem, deleteItem };
+async function addItemFromRecipe(req, res) {
+  try {
+    const item = await mealsService.addItemFromRecipe(Number(req.params.mealId), req.user.id, req.body);
+    return res.status(201).json({ message: 'Recipe logged as meal item.', item });
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to log recipe.' });
+  }
+}
+
+async function logRecipeDirectly(req, res) {
+  try {
+    const result = await mealsService.logRecipeDirectly(req.user.id, req.body);
+    return res.status(201).json({ message: 'Recipe logged.', ...result });
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to log recipe.' });
+  }
+}
+
+async function getHistory(req, res) {
+  try {
+    const result = await mealsService.getHistory(req.user.id, req.query.days);
+    return res.json(result);
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to fetch history.' });
+  }
+}
+
+module.exports = { getByDate, getHistory, createMeal, addItem, addItemFromFood, addItemFromRecipe, logRecipeDirectly, updateItem, deleteItem };

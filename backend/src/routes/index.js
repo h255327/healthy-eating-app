@@ -12,6 +12,7 @@ const recommendationsRoutes = require('./recommendations.routes');
 const shoppingRoutes        = require('./shopping.routes');
 const chatbotRoutes         = require('./chatbot.routes');
 const adminRoutes           = require('./admin.routes');
+const commentsRoutes        = require('./comments.routes');
 
 // Health check
 router.get('/health', (req, res) => {
@@ -29,5 +30,6 @@ router.use('/recommendations', recommendationsRoutes);
 router.use('/shopping',        shoppingRoutes);
 router.use('/chatbot',         chatbotRoutes);
 router.use('/admin',           adminRoutes);
+router.use('/comments',        commentsRoutes);
 
 module.exports = router;

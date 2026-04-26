@@ -37,6 +37,14 @@ async function findById(id) {
   return rows[0] || null;
 }
 
+async function findByDateAndType(userId, meal_date, meal_type) {
+  const [rows] = await pool.query(
+    'SELECT id, user_id, meal_date, meal_type FROM meals WHERE user_id = ? AND meal_date = ? AND meal_type = ?',
+    [userId, meal_date, meal_type]
+  );
+  return rows[0] || null;
+}
+
 async function createMeal({ userId, meal_date, meal_type }) {
   const [result] = await pool.query(
     'INSERT INTO meals (user_id, meal_date, meal_type) VALUES (?, ?, ?)',
@@ -86,4 +94,24 @@ async function removeItem(id) {
   await pool.query('DELETE FROM meal_items WHERE id = ?', [id]);
 }
 
-module.exports = { findByDate, findById, createMeal, findItemById, addItem, updateItem, removeItem };
+// Returns one row per date that has at least one meal, summing all items.
+// DATE_FORMAT ensures a consistent 'YYYY-MM-DD' string regardless of mysql2 version.
+async function findDailyTotals(userId, fromDate, toDate) {
+  const [rows] = await pool.query(
+    `SELECT
+       DATE_FORMAT(m.meal_date, '%Y-%m-%d') AS date,
+       COALESCE(SUM(mi.calories), 0)        AS calories,
+       COALESCE(SUM(mi.protein),  0)        AS protein,
+       COALESCE(SUM(mi.carbs),    0)        AS carbs,
+       COALESCE(SUM(mi.fat),      0)        AS fat
+     FROM meals m
+     LEFT JOIN meal_items mi ON m.id = mi.meal_id
+     WHERE m.user_id = ? AND m.meal_date BETWEEN ? AND ?
+     GROUP BY m.meal_date
+     ORDER BY m.meal_date ASC`,
+    [userId, fromDate, toDate]
+  );
+  return rows;
+}
+
+module.exports = { findByDate, findById, findByDateAndType, findDailyTotals, createMeal, findItemById, addItem, updateItem, removeItem };

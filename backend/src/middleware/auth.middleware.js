@@ -26,4 +26,15 @@ function authorize(...roles) {
   };
 }
 
-module.exports = { authenticate, authorize };
+// Attaches req.user if a valid token is present, but never blocks the request.
+function authenticateOptional(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      req.user = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET);
+    } catch { /* invalid token — continue as unauthenticated */ }
+  }
+  next();
+}
+
+module.exports = { authenticate, authenticateOptional, authorize };

@@ -2,8 +2,9 @@ const { pool } = require('../config/db');
 
 async function findById(id) {
   const [rows] = await pool.query(
-    `SELECT id, username, email, role, weight, goal, diet_type,
-            calorie_target, notification_preferences, created_at
+    `SELECT id, username, email, role,
+            weight, height, age, sex, activity_level,
+            goal, diet_type, calorie_target, notification_preferences, created_at
      FROM users WHERE id = ?`,
     [id]
   );
@@ -35,8 +36,8 @@ async function create({ username, email, passwordHash }) {
 }
 
 const UPDATABLE_FIELDS = [
-  'username', 'weight', 'goal',
-  'diet_type', 'calorie_target', 'notification_preferences',
+  'username', 'weight', 'height', 'age', 'sex', 'activity_level',
+  'goal', 'diet_type', 'calorie_target', 'notification_preferences',
 ];
 
 async function updateById(id, data) {

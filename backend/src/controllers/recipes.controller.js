@@ -59,4 +59,14 @@ async function remove(req, res) {
   }
 }
 
-module.exports = { getAll, getCategories, getById, create, update, remove };
+async function getNutrition(req, res) {
+  try {
+    const result = await recipesService.getNutrition(Number(req.params.id));
+    return res.json(result);
+  } catch (err) {
+    const status = err.status || 500;
+    return res.status(status).json({ error: err.message || 'Failed to calculate nutrition.' });
+  }
+}
+
+module.exports = { getAll, getCategories, getById, getNutrition, create, update, remove };

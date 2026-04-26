@@ -1,4 +1,5 @@
 const RecipeModel = require('../models/recipe.model');
+const { calculateRecipeNutrition } = require('../utils/recipeNutrition');
 
 async function getAll(filters) {
   return RecipeModel.findAll(filters);
@@ -33,4 +34,10 @@ async function remove(id, userId) {
   await RecipeModel.removeById(id);
 }
 
-module.exports = { getAll, getCategories, getById, create, update, remove };
+async function getNutrition(id) {
+  const recipe = await RecipeModel.findById(id);
+  if (!recipe) throw { status: 404, message: 'Recipe not found.' };
+  return calculateRecipeNutrition(recipe);
+}
+
+module.exports = { getAll, getCategories, getById, getNutrition, create, update, remove };

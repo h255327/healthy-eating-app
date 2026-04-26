@@ -12,8 +12,8 @@ async function getMe(req, res) {
 
 async function updateMe(req, res) {
   const allowed = [
-    'username', 'weight', 'goal',
-    'diet_type', 'calorie_target', 'notification_preferences',
+    'username', 'weight', 'height', 'age', 'sex', 'activity_level',
+    'goal', 'diet_type', 'calorie_target', 'notification_preferences',
   ];
 
   const data = Object.fromEntries(
